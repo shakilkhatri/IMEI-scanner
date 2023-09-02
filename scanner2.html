@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuaggaJS Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+</head>
+<body>
+    <div>IMEI SCANNER:</div>
+    <div id="interactive" class="viewport"></div>
+    <div id="IMEI"></div>
+    <button onclick="copy()">Copy</button>
+    <audio id="beep" src="https://www.soundjay.com/buttons/beep-07a.mp3"></audio>
+    <script type="text/javascript">
+        var count = 0;
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: document.querySelector('#interactive'),
+                constraints: {
+                    width: 500,
+                    height: 1000,
+                    facingMode: "environment"
+                },
+            },
+            decoder: {
+                readers: ["ean_reader", "ean_8_reader", "code_128_reader", "code_39_reader", "codabar_reader", "upc_reader", "upc_e_reader", "i2of5_reader"]
+            },
+            locator: {
+                patchSize: "medium",
+                halfSample: true
+            },
+            numOfWorkers: 4,
+            locate: true,
+            debug: false,
+            frequency: 10,
+            multiple: false,
+            inputStreamConstraints: {
+                width: 500,
+                height: 1000,
+                facingMode: 'environment'
+            }
+        }, function (err) {
+            if (err) {
+                console.log(err);
+                return
+            }
+            console.log("Initialization finished. Ready to start");
+            Quagga.start();
+        });
+
+        Quagga.onDetected(function (result) {
+            var code = result.codeResult.code;
+            console.log(code);
+            if (/^[0-9]{15,16}$/.test(code)) {
+                count++;
+                document.getElementById("beep").play();
+                const el = document.createElement('div');
+                const IMEI = document.getElementById("IMEI")
+                IMEI.textContent = code
+                el.value = code;
+                document.body.appendChild(el);
+                el.select();
+                el.setSelectionRange(0, 99999);
+                // document.execCommand('copy');
+                navigator.clipboard.writeText(code);
+                document.body.removeChild(el);
+                alert("IMEI number found! IMEI number is " + code + ". Detected " + count + " times.");
+                // Quagga.stop();
+            }
+        });
+
+        function copy(){
+            const IMEI = document.getElementById("IMEI")
+            IMEI.select()
+            IMEI.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(IMEI.textContent);
+        }
+    </script>
+</body>
+</html>
