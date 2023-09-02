@@ -8,7 +8,7 @@
     <div style="zoom: 2">IMEI SCANNER:</div>
     <div id="interactive" class="viewport"></div>
     <div style="zoom: 2">
-        <div id="IMEI">aa</div>
+        <div id="IMEI"></div>
         <button onclick="copy()">Copy</button>
     </div>
     <audio id="beep" src="https://www.soundjay.com/buttons/beep-07a.mp3"></audio>
@@ -59,6 +59,8 @@
                 try{
                 count++;
                 document.getElementById("beep").play();
+                const IMEI = document.getElementById("IMEI");
+                IMEI.textContent = code;
                } catch (e){
                     alert(e)
                 }
