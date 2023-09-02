@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>QuaggaJS Example</title>
+    <title>IMEI Scanner</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 </head>
 <body>
@@ -70,6 +70,7 @@
         });
 
         function copy(){
+            try{
             const IMEI = document.getElementById("IMEI");
             const textArea = document.createElement("textarea");
             textArea.value = IMEI.textContent;
@@ -79,6 +80,7 @@
             document.execCommand("copy");
             navigator.clipboard.writeText(IMEI.textContent)
             document.body.removeChild(textArea);
+            } catch (e){alert(e)}
         }
     </script>
 </body>
