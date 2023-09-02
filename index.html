@@ -70,11 +70,14 @@
         });
 
         function copy(){
+            const IMEI = document.getElementById("IMEI");
             const textArea = document.createElement("textarea");
             textArea.value = IMEI.textContent;
             document.body.appendChild(textArea);
             textArea.select();
+            textArea.setSelectionRange(0,99999);
             document.execCommand("copy");
+            navigator.clipboard.writeText(IMEI.textContent)
             document.body.removeChild(textArea);
         }
     </script>
