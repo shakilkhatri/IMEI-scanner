@@ -5,11 +5,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 </head>
 <body>
-    <div style="zoom: 2">IMEI SCANNER:</div>
+    <div style="zoom: 5">IMEI Scanner:</div>
     <div id="interactive" class="viewport"></div>
-    <div style="zoom: 2">
+    <div style="zoom: 5">
         <div id="IMEI"></div>
-        <button onclick="copy()">Copy</button>
+        <!--<button onclick="copy()">Copy</button>-->
     </div>
     <audio id="beep" src="https://www.soundjay.com/buttons/beep-07a.mp3"></audio>
     <script type="text/javascript">
@@ -49,7 +49,10 @@
             }
             console.log("Initialization finished. Ready to start");
             Quagga.start();
-            document.querySelector(".drawingBuffer").style.position = "absolute"
+            const canvas = document.querySelector(".drawingBuffer")
+            canvas.style.position = "absolute"
+            canvas.style.zoom = "0.1"
+            //canvas.style.border = "1px solid red"
         });
 
         Quagga.onDetected(function (result) {
@@ -71,15 +74,30 @@
 
         function copy(){
             try{
+            
             const IMEI = document.getElementById("IMEI");
             const textArea = document.createElement("textarea");
             textArea.value = IMEI.textContent;
             document.body.appendChild(textArea);
             textArea.select();
             textArea.setSelectionRange(0,99999);
-            document.execCommand("copy");
-            navigator.clipboard.writeText(IMEI.textContent)
+            //document.execCommand("copy");
+            navigator.permissions.query({name: "clipboard-write"}).then((permission) => {
+                if (permission.state === "granted" || permission.state === "prompt") {
+                    navigator.clipboard.write(IMEI.textContent).then(resolve, reject).catch(reject);
+                }
+                else {
+                    reject(new Error("Permission not granted!"));
+                }
+            });
+            navigator.clipboard.writeText(IMEI.textContent).then(() => {
+        alert("Text copied to clipboard");
+      })
+      .catch((error) => {
+        alert("Unable to copy text: ", error.message);
+      });
             document.body.removeChild(textArea);
+            alert("copied")
             } catch (e){alert(e)}
         }
     </script>
